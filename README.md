@@ -447,17 +447,243 @@ Supporting SSD boot improves developer productivity, reduces wear on embedded fl
 
 ## 4. Platform Security Requirements
 
+The platform SHALL implement industry-standard security mechanisms to establish a trusted execution environment, protect sensitive assets, and ensure the integrity and authenticity of firmware and software throughout the device lifecycle.
+
+---
+
 ### RDK-SOC-SEC-001: TPM2 or fTPM
 
-### RDK-SOC-SEC-002: OP-TEE support
+**Requirement**
 
-### RDK-SOC-SEC-003: Secure storage
+The platform SHALL provide Trusted Platform Module (TPM) version 2.0 capabilities, either through:
 
-### RDK-SOC-SEC-004: Rollback protected RTC
+- A discrete hardware TPM, or
+- A firmware TPM (fTPM) executing within a Trusted Execution Environment such as OP-TEE.
+
+The TPM SHALL be accessible through standard Linux TPM interfaces.
+
+**Priority**
+
+Mandatory
+
+**Rationale**
+
+TPM2 provides standardized services for secure key storage, cryptographic operations, attestation, and secure measurements without requiring vendor-specific implementations.
+
+**Verification**
+
+- Verify Linux detects the TPM.
+- Execute standard TPM2 commands.
+- Validate persistent key storage.
+
+**Evidence**
+
+- `tpm2-tools` output
+- Kernel boot log
+- TPM functional test report
+
+**References**
+
+- TPM 2.0 Specification
+- Arm SystemReady
+
+---
+
+### RDK-SOC-SEC-002: OP-TEE Support
+
+**Requirement**
+
+The platform SHALL support OP-TEE, or an equivalent standards-based Trusted Execution Environment (TEE), capable of executing trusted applications independently from the Rich Execution Environment.
+
+The TEE SHALL support:
+
+- Secure monitor integration
+- Trusted Applications (TAs)
+- Secure storage services
+- Standard Linux OP-TEE driver interfaces
+
+**Priority**
+
+Mandatory
+
+**Rationale**
+
+A Trusted Execution Environment provides hardware-isolated execution for security-sensitive services while maintaining interoperability through standard interfaces.
+
+**Verification**
+
+- Verify OP-TEE boots successfully.
+- Validate communication through the Linux OP-TEE driver.
+- Execute Trusted Application tests.
+
+**Evidence**
+
+- OP-TEE boot log
+- Kernel log
+- Trusted Application test results
+
+**References**
+
+- OP-TEE
+- Arm Trusted Firmware
+
+---
+
+### RDK-SOC-SEC-003: Secure Storage
+
+**Requirement**
+
+The platform SHALL provide secure persistent storage for confidential platform assets.
+
+Secure storage SHALL support protection of:
+
+- Cryptographic keys
+- Certificates
+- Credentials
+- Secure configuration data
+
+Secure storage SHOULD be implemented using hardware-backed protection mechanisms where available.
+
+**Priority**
+
+Mandatory
+
+**Rationale**
+
+Protecting sensitive assets prevents unauthorized extraction or modification of credentials and cryptographic material.
+
+**Verification**
+
+- Store and retrieve secure objects.
+- Validate access restrictions.
+- Confirm persistence across reboot.
+
+**Evidence**
+
+- Secure storage test report
+- Functional validation logs
+
+**References**
+
+- OP-TEE Secure Storage
+- Arm SystemReady
+
+---
+
+### RDK-SOC-SEC-004: Rollback-Protected RTC
+
+**Requirement**
+
+The platform SHALL provide a trusted time source that prevents unauthorized rollback of platform time.
+
+The implementation MAY use:
+
+- Battery-backed RTC
+- Capacitor-backed RTC
+- Secure monotonic counter
+- Other equivalent secure time mechanism
+
+The trusted time source SHALL support Secure Boot and certificate validation use cases.
+
+**Priority**
+
+Recommended
+
+**Rationale**
+
+Preventing time rollback protects against attacks involving expired certificates, firmware rollback, and replay of security-sensitive operations.
+
+**Verification**
+
+- Validate trusted time operation.
+- Attempt rollback scenarios.
+- Verify monotonic behavior.
+
+**Evidence**
+
+- RTC validation report
+- Secure time test logs
+
+**References**
+
+- Arm Platform Secure Boot Guide
+
+---
 
 ### RDK-SOC-SEC-005: Arm Chain of Trust
 
-### RDK-SOC-SEC-006: Secure Boot validation
+**Requirement**
+
+The platform SHALL implement the Arm Chain of Trust (CoT) principles for firmware authentication.
+
+Each boot stage SHALL authenticate the next stage before execution using cryptographic signatures and X.509 certificates or equivalent mechanisms.
+
+The Root of Trust SHALL originate from immutable hardware or equivalent trusted platform mechanisms.
+
+**Priority**
+
+Mandatory
+
+**Rationale**
+
+The Chain of Trust ensures that only authenticated firmware components are executed throughout the secure boot process.
+
+**Verification**
+
+- Validate each firmware stage.
+- Verify signature validation.
+- Confirm failure on modified firmware.
+
+**Evidence**
+
+- Secure boot report
+- Firmware signing configuration
+- Boot logs
+
+**References**
+
+- Arm Platform Secure Boot Guide
+- Arm Trusted Firmware
+
+---
+
+### RDK-SOC-SEC-006: Secure Boot Validation
+
+**Requirement**
+
+The platform SHALL successfully complete Secure Boot validation using the applicable Arm SystemReady Security test suite.
+
+Validation SHALL confirm:
+
+- Secure Boot is enabled.
+- Unsigned firmware is rejected.
+- Modified firmware is rejected.
+- Certificate enrollment and revocation operate correctly.
+- Boot measurements complete successfully where applicable.
+
+**Priority**
+
+Mandatory
+
+**Rationale**
+
+Conformance testing provides objective evidence that Secure Boot has been correctly implemented according to industry standards.
+
+**Verification**
+
+- Execute Arm SystemReady Secure Boot tests.
+- Execute negative boot tests using invalid firmware images.
+
+**Evidence**
+
+- Security certification report
+- Test logs
+- Boot validation report
+
+**References**
+
+- Arm SystemReady Security Interface Testing
+- UEFI Secure Boot Specification
 
 ---
 
