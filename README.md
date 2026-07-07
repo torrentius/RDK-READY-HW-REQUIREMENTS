@@ -316,14 +316,13 @@ EFI Runtime Variables provide standardized storage for boot configuration, Secur
 - EBBR
 
 ---
-
 ### RDK-SOC-BOOT-007: Independent Firmware Component Updates
 
 **Requirement**
 
-The firmware architecture SHALL permit BL31 (or the equivalent runtime firmware stage) to be updated independently of earlier boot stages whenever technically feasible.
+The firmware architecture SHALL support independent updates of firmware components wherever technically feasible.
 
-Updating BL31 SHALL NOT require updating BL2 unless required by platform architecture.
+Updating one firmware component (for example, TF-A, OP-TEE, U-Boot, or equivalent runtime firmware) SHALL NOT require updating unrelated boot stages unless mandated by the platform architecture.
 
 **Priority**
 
@@ -331,18 +330,18 @@ Mandatory
 
 **Rationale**
 
-Independent firmware updates reduce deployment risk and minimize unnecessary firmware replacement.
+Supporting independent firmware updates reduces deployment risk, minimizes unnecessary firmware replacement, and simplifies security updates throughout the platform lifecycle.
 
 **Verification**
 
-- Perform standalone BL31 firmware update.
-- Verify successful boot after update.
+- Perform an update of an individual firmware component.
+- Verify successful platform boot and operation without modifying unrelated firmware stages.
 
 **Evidence**
 
-- Firmware versions
-- Update log
-
+- Firmware version information
+- Update logs
+- Boot logs
 ---
 
 ### RDK-SOC-BOOT-008: eMMC Boot Partitions
