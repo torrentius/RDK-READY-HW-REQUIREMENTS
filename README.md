@@ -2536,15 +2536,66 @@ Platform-specific userspace software SHALL use standard Linux APIs and services 
 
 Examples include:
 
-- D-Bus
+### System Management
+
 - systemd
-- Netlink
-- libgpiod
+- journald
+- udev
+
+### Networking
+
+- Netlink / rtnetlink
+- iproute2
+- ethtool
+- nftables
+- bridge
+- tc
+
+### Wi-Fi
+
+- cfg80211 / nl80211
+- hostapd
+- hostapd control interface / hostapd_cli
+- wpa_supplicant
+- wpa_cli
+
+### Ethernet
+
+- phylib / phylink userspace interfaces
+- ethtool
+
+### Cellular
+
 - ModemManager
-- NetworkManager (where applicable)
+- mmcli
+- QMI
+- MBIM
+
+### Platform I/O
+
+- libgpiod
+- evdev (Linux Input)
+- LED subsystem
+
+### Storage
+
 - Standard Linux filesystems
+- blkid
+- lsblk
+- mount
+
+### Security
+
+- PKCS#11
+- TPM2 userspace tools
+- OpenSSL providers
+
+### Kernel Interfaces
+
 - procfs
 - sysfs
+- configfs
+- debugfs (debug only)
 
 Vendor-specific userspace APIs SHALL be limited to hardware-specific functionality for which no suitable Linux or RDK-B interface exists.
 
