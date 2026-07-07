@@ -317,7 +317,7 @@ EFI Runtime Variables provide standardized storage for boot configuration, Secur
 
 ---
 
-### RDK-SOC-BOOT-007: Independent BL31 Updates
+### RDK-SOC-BOOT-007: Independent Firmware Component Updates
 
 **Requirement**
 
