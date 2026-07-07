@@ -115,26 +115,334 @@ When a requirement extends an external specification, the originating specificat
 ---
 ## 3. Boot and Firmware Requirements
 
-### RDK-SOC-BOOT-001: EBBR UEFI compliance
+The boot firmware establishes the contract between the hardware platform and the operating system. The platform SHALL implement industry-standard boot interfaces to ensure portability, interoperability, secure boot, and long-term maintainability.
+
+---
+
+### RDK-SOC-BOOT-001: EBBR UEFI Compliance
+
+**Requirement**
+
+The platform SHALL implement the mandatory UEFI requirements defined by the Embedded Base Boot Requirements (EBBR) specification.
+
+**Priority**
+
+Mandatory
+
+**Rationale**
+
+Compliance with EBBR provides a standardized firmware interface, enabling the same operating system image to boot across multiple hardware platforms without platform-specific modifications.
+
+**Verification**
+
+- Execute Arm SystemReady EBBR compliance tests.
+- Verify successful boot of the RDK-B reference image.
+
+**Evidence**
+
+- EBBR compliance report
+- Boot log
+- Firmware version
+
+**References**
+
+- EBBR Section 2
+
+---
 
 ### RDK-SOC-BOOT-002: UEFI Secure Boot
 
-### RDK-SOC-BOOT-003: EFI Capsule firmware updates
+**Requirement**
 
-### RDK-SOC-BOOT-004: Arm PSCI support
+The platform SHALL support UEFI Secure Boot, including secure management of platform key databases for certificate enrollment and revocation.
 
-### RDK-SOC-BOOT-005: Reserved memory exposed through UEFI
+**Priority**
+
+Mandatory
+
+**Rationale**
+
+UEFI Secure Boot establishes a trusted execution chain by ensuring that only authenticated firmware and operating system components are executed.
+
+**Verification**
+
+- Execute Secure Boot validation tests.
+- Verify certificate enrollment and revocation.
+
+**Evidence**
+
+- Secure Boot test report
+- Firmware configuration
+- Boot log
+
+**References**
+
+- UEFI Specification
+- Arm SystemReady Security Tests
+
+---
+
+### RDK-SOC-BOOT-003: EFI Capsule Firmware Updates
+
+**Requirement**
+
+The platform SHALL support secure firmware updates using the UEFI EFI Capsule Update mechanism.
+
+The implementation SHALL support updates of firmware components such as:
+
+- TF-A
+- BL31
+- U-Boot
+- Platform firmware
+
+without requiring proprietary update mechanisms.
+
+**Priority**
+
+Mandatory
+
+**Rationale**
+
+EFI Capsules provide a standard firmware update mechanism supported across Linux distributions.
+
+**Verification**
+
+- Execute EFI Capsule update tests.
+- Verify firmware version changes after update.
+
+**Evidence**
+
+- Firmware update log
+- Capsule update report
+
+**References**
+
+- Arm BBR
+- EFI Update Capsule
+
+---
+
+### RDK-SOC-BOOT-004: Arm PSCI Support
+
+**Requirement**
+
+The platform SHALL implement the Arm Power State Coordination Interface (PSCI) to provide standardized CPU power management services.
+
+**Priority**
+
+Mandatory
+
+**Rationale**
+
+PSCI enables Linux to manage CPU bring-up, shutdown, suspend, reboot, and power-off operations without vendor-specific firmware interfaces.
+
+**Verification**
+
+- Verify Linux detects PSCI.
+- Validate reboot and power management operations.
+
+**Evidence**
+
+- Kernel boot log
+- PSCI detection output
+
+**References**
+
+- Arm PSCI
+- EBBR
+
+---
+
+### RDK-SOC-BOOT-005: Reserved Memory Exposed Through UEFI
+
+**Requirement**
+
+Any memory reserved for firmware, secure world, co-processors, or other platform components SHALL be described through the UEFI memory map.
+
+Reserved memory SHALL NOT rely solely on Device Tree reserved-memory nodes when booting through UEFI.
+
+**Priority**
+
+Mandatory
+
+**Rationale**
+
+Linux obtains the authoritative memory map from UEFI during boot. Reserved memory must therefore be represented consistently within the firmware interface.
+
+**Verification**
+
+- Inspect UEFI memory map.
+- Validate Linux reserved memory regions.
+
+**Evidence**
+
+- UEFI memory map
+- Kernel boot log
+
+**References**
+
+- Arm BBR
+
+---
 
 ### RDK-SOC-BOOT-006: EFI Runtime Variables
 
-### RDK-SOC-BOOT-007: Independent BL31 updates
+**Requirement**
 
-### RDK-SOC-BOOT-008: eMMC boot partitions
+The platform SHOULD provide EFI Runtime Variable support.
 
-### RDK-SOC-BOOT-009: Dual-bank / fallback boot
+Where persistent storage is available, runtime variables SHOULD survive system reboot.
 
-### RDK-SOC-BOOT-010: SSD boot support
+**Priority**
 
+Recommended
+
+**Rationale**
+
+EFI Runtime Variables provide standardized storage for boot configuration, Secure Boot databases, and firmware state.
+
+**Verification**
+
+- Read and modify EFI runtime variables.
+- Verify persistence across reboot.
+
+**Evidence**
+
+- efivar output
+- Runtime variable test report
+
+**References**
+
+- EBBR
+
+---
+
+### RDK-SOC-BOOT-007: Independent BL31 Updates
+
+**Requirement**
+
+The firmware architecture SHALL permit BL31 (or the equivalent runtime firmware stage) to be updated independently of earlier boot stages whenever technically feasible.
+
+Updating BL31 SHALL NOT require updating BL2 unless required by platform architecture.
+
+**Priority**
+
+Mandatory
+
+**Rationale**
+
+Independent firmware updates reduce deployment risk and minimize unnecessary firmware replacement.
+
+**Verification**
+
+- Perform standalone BL31 firmware update.
+- Verify successful boot after update.
+
+**Evidence**
+
+- Firmware versions
+- Update log
+
+---
+
+### RDK-SOC-BOOT-008: eMMC Boot Partitions
+
+**Requirement**
+
+Platforms using eMMC as the primary boot device SHALL store boot firmware within the standard eMMC Boot Partitions.
+
+The platform SHALL support standard eMMC boot partition management.
+
+**Priority**
+
+Mandatory
+
+**Rationale**
+
+Using standardized eMMC boot partitions improves compatibility across boot firmware implementations.
+
+**Verification**
+
+- Verify boot partition configuration.
+- Validate boot firmware location.
+
+**Evidence**
+
+- eMMC partition table
+- Firmware image layout
+
+**References**
+
+- Arm SystemReady
+- JEDEC eMMC Specification
+
+---
+
+### RDK-SOC-BOOT-009: Dual-Bank / Fallback Boot
+
+**Requirement**
+
+Platforms booting from flash memory SHALL support either:
+
+- Dual-bank firmware updates, or
+- Automatic fallback to an alternate boot source.
+
+Fallback SHALL permit recovery from interrupted or failed firmware updates.
+
+**Priority**
+
+Mandatory
+
+**Rationale**
+
+A resilient boot architecture reduces the risk of rendering devices unbootable following firmware update failures.
+
+**Verification**
+
+- Simulate interrupted firmware update.
+- Verify successful recovery.
+
+**Evidence**
+
+- Firmware recovery test report
+- Boot log
+
+---
+
+### RDK-SOC-BOOT-010: SSD Boot Support
+
+**Requirement**
+
+The platform SHOULD support booting Linux from standard high-performance storage devices, including:
+
+- NVMe
+- SATA
+- USB 3.x Mass Storage
+
+where supported by the hardware design.
+
+**Priority**
+
+Recommended
+
+**Rationale**
+
+Supporting SSD boot improves developer productivity, reduces wear on embedded flash devices, and simplifies deployment of development and validation environments.
+
+**Verification**
+
+- Boot the RDK-B reference image from supported storage.
+- Verify normal system operation.
+
+**Evidence**
+
+- Boot log
+- Storage enumeration
+- Functional validation report
+
+**References**
+
+- Arm SystemReady
 ---
 
 ## 4. Platform Security Requirements
