@@ -568,21 +568,22 @@ Protecting sensitive assets prevents unauthorized extraction or modification of 
 - Arm SystemReady
 
 ---
-
-### RDK-SOC-SEC-004: Rollback-Protected RTC
+### RDK-SOC-SEC-004: Trusted Time or Monotonic Counter
 
 **Requirement**
 
-The platform SHALL provide a trusted time source that prevents unauthorized rollback of platform time.
+The platform SHOULD provide a mechanism to detect or prevent rollback of security-sensitive time or counters.
 
-The implementation MAY use:
+Suitable implementations MAY include:
 
 - Battery-backed RTC
-- Capacitor-backed RTC
+- Secure RTC
 - Secure monotonic counter
+- TPM-backed monotonic counter
+- Replay Protected Memory Block (RPMB)
 - Other equivalent secure time mechanism
 
-The trusted time source SHALL support Secure Boot and certificate validation use cases.
+Where certificate validity, firmware update policies, or secure storage depend on trusted time, the implementation SHOULD ensure that rollback attacks cannot invalidate those security mechanisms.
 
 **Priority**
 
@@ -590,18 +591,19 @@ Recommended
 
 **Rationale**
 
-Preventing time rollback protects against attacks involving expired certificates, firmware rollback, and replay of security-sensitive operations.
+Protecting trusted time or monotonic counters helps prevent replay attacks, firmware rollback, and misuse of expired credentials while allowing platforms to select an implementation appropriate for their hardware capabilities.
 
 **Verification**
 
-- Validate trusted time operation.
-- Attempt rollback scenarios.
-- Verify monotonic behavior.
+- Verify the trusted time or counter mechanism.
+- Attempt rollback scenarios where supported.
+- Confirm replay protection mechanisms operate correctly.
 
 **Evidence**
 
-- RTC validation report
-- Secure time test logs
+- Platform security architecture
+- Validation report
+- Secure storage test results
 
 **References**
 
