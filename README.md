@@ -527,7 +527,6 @@ A Trusted Execution Environment provides hardware-isolated execution for securit
 - Arm Trusted Firmware
 
 ---
-
 ### RDK-SOC-SEC-003: Secure Storage
 
 **Requirement**
@@ -541,7 +540,16 @@ Secure storage SHALL support protection of:
 - Credentials
 - Secure configuration data
 
-Secure storage SHOULD be implemented using hardware-backed protection mechanisms where available.
+Secure storage SHOULD be implemented using hardware-backed protection mechanisms where available, including:
+
+- TPM 2.0
+- OP-TEE Secure Storage
+- Replay Protected Memory Block (RPMB)
+- Hardware Security Module (HSM), where applicable
+
+The platform SHOULD expose secure storage services through a standards-based cryptographic interface such as PKCS#11.
+
+Applications SHOULD interact with secure objects through PKCS#11 rather than vendor-specific APIs whenever practical.
 
 **Priority**
 
@@ -549,24 +557,27 @@ Mandatory
 
 **Rationale**
 
-Protecting sensitive assets prevents unauthorized extraction or modification of credentials and cryptographic material.
+Secure storage protects sensitive assets from unauthorized access while enabling portable applications through standardized cryptographic interfaces. Using PKCS#11 decouples applications from the underlying secure storage implementation, allowing the same software to operate with TPMs, OP-TEE, HSMs, or other secure storage technologies.
 
 **Verification**
 
 - Store and retrieve secure objects.
 - Validate access restrictions.
 - Confirm persistence across reboot.
+- Verify PKCS#11 object enumeration and cryptographic operations where PKCS#11 is implemented.
 
 **Evidence**
 
-- Secure storage test report
+- Secure storage validation report
+- PKCS#11 interoperability test report
 - Functional validation logs
 
 **References**
 
+- PKCS #11 Cryptographic Token Interface Standard
 - OP-TEE Secure Storage
+- TPM 2.0
 - Arm SystemReady
-
 ---
 ### RDK-SOC-SEC-004: Trusted Time or Monotonic Counter
 
@@ -1135,18 +1146,13 @@ Examples include:
 - rtnetlink
 - ethtool
 - libgpiod
-- V4L2
-- DRM/KMS
-- ALSA
 - TPM subsystem
-- IIO subsystem
 - hwmon
 - thermal framework
 - LED framework
 - input subsystem
 - regulator framework
 - watchdog subsystem
-- Industrial I/O framework
 
 Broadband-specific functionality MAY expose additional interfaces where no equivalent Linux subsystem exists.
 
@@ -1182,7 +1188,7 @@ The hardware platform SHALL implement standardized Arm architecture components t
 
 **Requirement**
 
-New platform designs SHOULD comply with the applicable Arm Base System Architecture (BSA) and Server Base System Architecture (SBSA) requirements appropriate for embedded platforms.
+New platform designs SHOULD comply with the applicable Arm Base System Architecture (BSA) requirements appropriate for embedded platforms.
 
 The SoC SHALL implement standard Arm architectural components, including processors, interrupt controllers, timers, MMU, SMMU (where applicable), and other architectural IP blocks in accordance with Arm recommendations.
 
